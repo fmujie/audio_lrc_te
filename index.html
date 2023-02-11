@@ -49,5 +49,102 @@
         }
         
     </script>
+
+
+    <div class="gsc container">
+    <div class="opt-group container">
+        <style>
+        .opt-group > button {
+            width: 100px;
+        }
+        .text-container{
+            height: 60vh;
+        }
+        </style>
+        <button onclick="play(-1)" class="btn btn-primary">-1</button>
+        <button onclick="play(-0.1)" class="btn btn-primary">-0.1</button>
+        <button onclick="play(-.01)" class="btn btn-primary">-0.01</button>
+        <button id="btn_play_current" onclick="play(0)" class="btn btn-danger">0</button>
+        <button onclick="play(0.01)" class="btn btn-primary">+0.01</button>
+        <button onclick="play(0.1)" class="btn btn-primary">+0.1</button>
+        <button onclick="play(1)" class="btn btn-primary">+1</button>
+    </div>
+
+    <hr>
+    <div><button class="btn btn-primary" id="prev">上一词 </button> <button class="btn btn-primary" id="next">下一词</button>
+    <span>|</span> 切换歌词
+</div>
+    <hr>
+    <div>  
+        <button class="btn btn-primary" id="btn_spile">分词-[文本换行]</button>
+        <button class="btn btn-success" id="fin">完成-[保存处理后的信息]</button>
+
+
+    </div>
+    <hr />
+    <div class="text-container row">
+        <textarea class="col-12" id="music-text">
+            穿新衣吧 剪新发型呀 轻松一下 Wds98 打扮漂亮 18岁是天堂 我们的生活 甜得像糖 穿新衣吧 剪新发型呀 轻松一下 Wds98 以后的路不再会有痛苦 我们的未来该有多酷
+        </textarea>
+    </div>
+
+
+    <script>
+        let musicTextDom = document.getElementById('music-text')
+        let finDom = document.getElementById('fin')
+        let btn_next = document.getElementById("next")
+        let btn_prev = document.getElementById("prev")
+        let btn_play_current = document.getElementById("btn_play_current")
+        let btn_spile = document.getElementById("btn_spile")
+
+        let targetarr;             // 待处理 的文本数组
+        let targetarrIndex = 0;    // 当前索引
+        let currentPlayPoint = 0;  // 当前时间
+        let target = [] // 目标数组 那个字 , 什么时间 保留2位小数  // 你在此基础上继续操作
+
+        btn_spile.addEventListener("click",()=>{
+            textarr = musicTextDom.value.replace(/\s*/g, "").split("")
+        musicTextDom.value = textarr.join("\n")
+        targetarr = musicTextDom.value.split("\n")
+        })
+
+        btn_next.addEventListener("click",()=>{
+            targetarrIndex++
+            btn_play_current.innerText =targetarr[targetarrIndex] +"-" + currentPlayPoint
+            console.log('%cindex.html line:74 targetarr[targetarrIndex]', 'color: #26bfa5;', targetarr[targetarrIndex]);
+        })
+
+        btn_prev.addEventListener("click",()=>{
+            targetarrIndex--
+            btn_play_current.innerText =targetarr[targetarrIndex] +"-" + currentPlayPoint
+            console.log('%cindex.html line:74 targetarr[targetarrIndex]', 'color: #26bfa5;', targetarr[targetarrIndex]);
+
+        })
+
+        finDom.addEventListener("click",()=>{
+            console.log('%cindex.html line:61 "Object"', 'color: #26bfa5;', "Object");
+            targetarr = musicTextDom.value.split("\n")
+            btn_play_current.innerText =targetarr[targetarrIndex] +"-" + currentPlayPoint
+            console.log('%cindex.html line:64 targetarr', 'color: #26bfa5;', targetarr);
+        })
+
+        textarr = musicTextDom.value.replace(/\s*/g, "").split("")
+        musicTextDom.value = textarr.join("\n")
+        targetarr = musicTextDom.value.split("\n")
+
+        function play(relTime){
+            let tt =Math.round(( currentPlayPoint + relTime)* 100) / 100
+            audio.currentTime = tt 
+            currentPlayPoint = tt
+            btn_play_current.innerText =targetarr[targetarrIndex] +"-" + tt
+            console.log('%cindex.html line:80 ' + targetarr[targetarrIndex], 'color: #26bfa5;', currentPlayPoint);
+            // 
+            target[targetarrIndex] = {
+                key:targetarr[targetarrIndex],
+                time:tt
+            }
+        }
+    </script>
+    </div>
 </body>
 </html>
