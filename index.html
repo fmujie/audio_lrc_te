@@ -13,7 +13,7 @@
     <audio id="audio_element" style="opacity: 0.5;" controls>
         <source src="audio/newboy.mp3" type="audio/mpeg">
     </audio>
-    <span id="curIntro" style="display: none"> 穿新衣吧 剪新发型呀 轻松一下 Wds98 打扮漂亮 18岁是天堂 我们的生活 甜得像糖 穿新衣吧 剪新发型呀 轻松一下 Wds98 以后的路不再会有痛苦 我们的未来该有多酷 </span>
+    <span id="curIntro" style="display: none">穿新衣吧 剪新发型呀 轻松一下 Wds98 打扮漂亮 18岁是天堂 我们的生活 甜得像糖 穿新衣吧 剪新发型呀 轻松一下 Wds98 以后的路不再会有痛苦 我们的未来该有多酷 </span>
     <button type="button" id="play_btn"  class="btn btn-primary">Reload</button>
     <button type="button" id="tag_btn" class="btn btn-primary">Tag</button>
 
@@ -31,15 +31,21 @@
                 audio.play()
             }
         }
+        
         $('audio').bind('ended', function(){
             console.log('ended')
             console.log(lrcArr)
         })
 
         tagBtn.onclick = function () {
-            currentTime = audio.currentTime
-            console.log('[' + currentTime + '] ' + data[index]);
-            typeof(data[index]) == 'string' ? lrcArr.push('[' + currentTime + '] ' + data[index++]) : null
+            currentTime = audio.currentTime.toFixed(2)
+            let m = parseInt(currentTime / 60 % 60).toString()
+            let s = parseInt(currentTime % 60).toString()
+            let ms = (currentTime % 60).toFixed(2).toString().slice(-2)
+            m.length != 2 ? m = '0' + m : m
+            s.length != 2 ? s = '0' + s : s
+            console.log('[' + m + ':' + s + '.' + ms + '] ' + data[index]);
+            typeof(data[index]) == 'string' ? lrcArr.push('[' + m + ':' + s + '.' + ms + '] ' + data[index++]) : null
         }
         
     </script>
