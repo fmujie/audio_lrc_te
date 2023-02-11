@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <audio id="audio_element" style="opacity: 0.5;" controls>
+        <source src="audio/newboy.mp3" type="audio/mpeg">
+    </audio>
+    <span id="curIntro" style="display: none"> 穿新衣吧 剪新发型呀 轻松一下 Wds98 打扮漂亮 18岁是天堂 我们的生活 甜得像糖 穿新衣吧 剪新发型呀 轻松一下 Wds98 以后的路不再会有痛苦 我们的未来该有多酷 </span>
+    <button type="button" id="Tag" class="btn btn-primary">Tag</button>
+    <script>
+        let data = $("#curIntro").html().replace(/\s*/g,"").split('')
+        let index = 0
+        let lrcArr = []
+        let audio = document.getElementById('audio_element');
+        let preTime = null
+        // let playTime = null
+        $('audio').bind('play', function(audio){
+            // playTime = Date.now()
+            console.log(audio.currentTime)
+        })
+        $('#Tag').click([lrcArr, data, index, audio, preTime], function(){
+            if (!audio.play()) {
+                audio.play();
+                console(audio.currentTime)
+            }
+            // console.log(playTime)
+            // currentTime = string(Date.now() - playTime)
+            // console.log(currentTime)
+            // if (preTime == null) {
+            //     preTime = currentTime
+            // }
+            // var relaTime = currentTime - preTime
+            // console.log(currentTime, preTime, relaTime)
+            // console.log('[' + relaTime + '] ' + data[index]);
+            // typeof(data[index]) == 'string' ? lrcArr.push('[' + relaTime + '] ' + data[index++]) : null
+        })
+        $('audio').bind('pause', [this.timeArr, this.data], function() {
+            console.log(timeArr, data)
+            console.log('pause')
+        })
+        $('audio').bind('ended', function(){
+            console.log(this.timeArr)
+            console.log('ended')
+            console.log(lrcArr)
+        })
+    </script>
+</body>
+</html>
