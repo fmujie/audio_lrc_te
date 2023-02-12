@@ -101,6 +101,8 @@
         let musicArr = null
         let lrcArr = []
         let currentTime = null
+        var pattern1 = new RegExp("[0-9]+");  // 判断是否为数字
+        let pattern2 = new RegExp("[A-Za-z]+");  // 判断是否为英文
         let musicTextDom = document.getElementById('music-text')
         let finBtn = document.getElementById('fin-btn')
         let spileBtn = document.getElementById('spile-btn')
@@ -164,104 +166,38 @@
             let i = 0
             let j = 0
             let k = 0
+            let m = null
             while(i < textarr.length){
                 if (textarr[i] == '<'){
-                    changeArr[k-1] = textarr[i - 1] + '<br>'
-                    console.log('变化：' + String(i - 1) + textarr[i - 1])
-                    j += 4
+                    changeArr[k - 1] = changeArr[k-1] + '<br>'
                     i += 4
                 } else {
-                    textarr[i - j] = textarr[i]
-                    changeArr[k++] = textarr[i - j]
-                    console.log('正常：' + String(i - j) + textarr[i - j])
-                    i += 1
+                    if (isEnOrNum(textarr[i])) {
+                        m = i
+                        while (isEnOrNum(textarr[++i])) {
+                            textarr[m] += textarr[i]
+                        }
+                        console.log(i, m, k, textarr[m])
+                        changeArr[k++] = textarr[m]
+                    } else {
+                        changeArr[k++] = textarr[i++]
+                    }
                 }
             }
-
             console.log(changeArr)
             musicTextDom.value = changeArr.join("\n")
         })
-/* ***************************************************************************************** */
-
-
-// 使用  group_target_str  返回处理后的数组
-
-
-
-
-
-
-
-/**
- *  判读字符时候为英文或 数字
- */
-
- 
- function isCharInTarget(char_str) {
-    if (
-        (char_str >= "a" && char_str <= "z") ||
-        (char_str >= "A" && char_str <= "Z") ||
-        (char_str >= "0" && char_str <= "9")
-    ) {
-        return true;
-    }
-
-    return false;
-}
-/**
- * 根据[当前索引]从[待查数组]中获取接下来第一个非目标字符的 索引
- * @param {Array} arr 待查数组
- * @param {int} current_index 当前索引
- * @returns {int} 索引, -1 表示未查到
- */
-function getNextFirstNotTargetIndex(arr, current_index) {
-    for (let i = current_index; i < arr.length; i++) {
-        if (!isCharInTarget(arr[i])) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-/**
- * 组合 目标字符串
- * @param {Array} arr 待处理数组
- * @returns 组合后的字符数组
- */
-function group_target_str(arr) {
-    for (let i = 0; i < arr.length; i++) {
-        if (isCharInTarget(arr[i])) {
-            let next_first_not_index = getNextFirstNotTargetIndex(arr, i);
-            if (next_first_not_index > 0) {
-                let temp_str = "";
-                for (let ii = i; ii < next_first_not_index; ii++) {
-                    temp_str = temp_str + arr[ii];
-                    arr[ii] = "";
-                }
-                console.log("%cmain.js line:51 temp_str", "color: red;", temp_str);
-
-                arr[i] = temp_str;
+        /**
+         *  判读字符时候为英文或 数字
+         * returns {boolean} result, true or false
+         */
+        function isEnOrNum (str) {
+            if (pattern1.test(str) || pattern2.test(str)) {
+                return true
+            } else {
+                return false
             }
-            i = next_first_not_index + 1;
         }
-    }
-    
-
-    return arr.filter(item=> item !="")
-}
-
-
-
-
-
-
-
-
-
-
-
-
-/* ***************************************************************************************** */
     </script>
 </body>
 </html>
