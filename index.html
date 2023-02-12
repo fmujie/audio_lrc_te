@@ -181,6 +181,87 @@
             console.log(changeArr)
             musicTextDom.value = changeArr.join("\n")
         })
+/* ***************************************************************************************** */
+
+
+// 使用  group_target_str  返回处理后的数组
+
+
+
+
+
+
+
+/**
+ *  判读字符时候为英文或 数字
+ */
+
+ 
+ function isCharInTarget(char_str) {
+    if (
+        (char_str >= "a" && char_str <= "z") ||
+        (char_str >= "A" && char_str <= "Z") ||
+        (char_str >= "0" && char_str <= "9")
+    ) {
+        return true;
+    }
+
+    return false;
+}
+/**
+ * 根据[当前索引]从[待查数组]中获取接下来第一个非目标字符的 索引
+ * @param {Array} arr 待查数组
+ * @param {int} current_index 当前索引
+ * @returns {int} 索引, -1 表示未查到
+ */
+function getNextFirstNotTargetIndex(arr, current_index) {
+    for (let i = current_index; i < arr.length; i++) {
+        if (!isCharInTarget(arr[i])) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+/**
+ * 组合 目标字符串
+ * @param {Array} arr 待处理数组
+ * @returns 组合后的字符数组
+ */
+function group_target_str(arr) {
+    for (let i = 0; i < arr.length; i++) {
+        if (isCharInTarget(arr[i])) {
+            let next_first_not_index = getNextFirstNotTargetIndex(arr, i);
+            if (next_first_not_index > 0) {
+                let temp_str = "";
+                for (let ii = i; ii < next_first_not_index; ii++) {
+                    temp_str = temp_str + arr[ii];
+                    arr[ii] = "";
+                }
+                console.log("%cmain.js line:51 temp_str", "color: red;", temp_str);
+
+                arr[i] = temp_str;
+            }
+            i = next_first_not_index + 1;
+        }
+    }
+    
+
+    return arr.filter(item=> item !="")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* ***************************************************************************************** */
     </script>
 </body>
 </html>
