@@ -33,14 +33,12 @@
     </style>
 </head>
 <body>
-    <audio id="audio-element" style="opacity: 0.5;" controls>
-        <source src="audio/newboy.mp3" type="audio/mpeg">
-    </audio>
+    
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
         打开模态框
     </button>
-     <!-- 模态框 -->
-    <div class="modal fade" id="myModal">
+    <!-- Lrc模态框 -->
+    <div class="modal fade" id="myModal" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-lg">
         <div class="modal-content">
     
@@ -50,13 +48,27 @@
                 <button class="btn btn-success mr-1" id="fin-btn">保存-[分词后]</button>
                 <button type="button" id="reload-btn" class="btn btn-primary mr-1">Reload</button>
                 <button type="button" id="tag-btn" class="btn btn-primary mr-1">Tag</button>
+                <audio id="audio-element" style="opacity: 0.5;" controls>
+                    <source src="audio/newboy.mp3" type="audio/mpeg">
+                </audio>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
     
             <!-- 模态框主体 -->
             <div class="modal-body d-flex justify-content-around bg-secondary">
                 <div class="text-container row">
-                    <textarea class="form-control" id="music-text" rows="5" style="width: 200px;" id="comment">穿新衣吧 剪新发型呀 轻松一下 Wds98 打扮漂亮 18岁是天堂 我们的生活 甜得像糖 穿新衣吧 剪新发型呀 轻松一下 Wds98 以后的路不再会有痛苦 我们的未来该有多酷</textarea>
+                    <textarea class="form-control" id="music-text" rows="5" style="width: 200px;" id="comment">穿新衣吧 
+剪新发型呀 
+轻松一下 Wds98 
+打扮漂亮 
+18岁是天堂 
+我们的生活 
+甜得像糖 
+穿新衣吧 
+剪新发型呀 
+轻松一下 Wds98 
+以后的路不再会有痛苦 
+我们的未来该有多酷二号</textarea>
                 </div>
                 <div class="terminal-window">
                     <header>
@@ -83,19 +95,19 @@
     </div>
     <script src="./JS/500ios.js"></script>
     <script>
-        let musicTextDom = document.getElementById('music-text')
-        let finBtn = document.getElementById('fin-btn')
-        let spileBtn = document.getElementById('spile-btn')
-        // let data = $("#curIntro").html().replace(/\s*/g,"").split('')
         let index = 0
         let textArr = null
         let textArrIndex = 0;  
         let musicArr = null
         let lrcArr = []
         let currentTime = null
+        let musicTextDom = document.getElementById('music-text')
+        let finBtn = document.getElementById('fin-btn')
+        let spileBtn = document.getElementById('spile-btn')
         let tagBtn = document.getElementById('tag-btn')
         let reloadBtn = document.getElementById('reload-btn')
         let audio = document.getElementById('audio-element');
+        
         reloadBtn.onclick = function () {
             index = 0;  // reset index
             lrcArr = []  // clear array
@@ -145,12 +157,30 @@
             })
 
         spileBtn.addEventListener("click",()=>{
-            textarr = musicTextDom.value.replace(/\s*/g, "").split("")
-            musicTextDom.value = textarr.join("\n")
-            textArr = musicTextDom.value.split("\n")
-            console.log(textArr)
+            console.log(musicTextDom.value)
+            textarr = musicTextDom.value.replace(/\n/g,"<br>").replace(/\s*/g,"").split('')
+            console.log(textarr)
+            let changeArr = []
+            let i = 0
+            let j = 0
+            let k = 0
+            while(i < textarr.length){
+                if (textarr[i] == '<'){
+                    changeArr[k-1] = textarr[i - 1] + '<br>'
+                    console.log('变化：' + String(i - 1) + textarr[i - 1])
+                    j += 4
+                    i += 4
+                } else {
+                    textarr[i - j] = textarr[i]
+                    changeArr[k++] = textarr[i - j]
+                    console.log('正常：' + String(i - j) + textarr[i - j])
+                    i += 1
+                }
+            }
+
+            console.log(changeArr)
+            musicTextDom.value = changeArr.join("\n")
         })
-        
     </script>
 </body>
 </html>
