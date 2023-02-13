@@ -44,10 +44,11 @@
     
             <!-- 模态框头部 -->
             <div class="modal-header">
-                <button class="btn btn-primary mr-1" id="spile-btn">分词-[换行]</button>
-                <button class="btn btn-success mr-1" id="fin-btn">保存-[分词后]</button>
+                <button class="btn btn-primary mr-1" id="spile-btn">分词</button>
+                <button class="btn btn-success mr-1" id="fin-btn">保存</button>
                 <button type="button" id="reload-btn" class="btn btn-primary mr-1">Reload</button>
                 <button type="button" id="tag-btn" class="btn btn-primary mr-1">Tag</button>
+                <button onclick="writing()" type="button" id="tag-btn" class="btn btn-primary mr-1">writing</button>
                 <audio id="audio-element" style="opacity: 0.5;" controls>
                     <source src="audio/newboy.mp3" type="audio/mpeg">
                 </audio>
@@ -68,7 +69,7 @@
 剪新发型呀 
 轻松一下 Wds98 
 以后的路不再会有痛苦 
-我们的未来该有多酷二号</textarea>
+我们的未来该有多酷</textarea>
                 </div>
                 <div class="terminal-window">
                     <header>
@@ -100,8 +101,9 @@
         let textArrIndex = 0;  
         let musicArr = null
         let lrcArr = []
+        let lyrics = []
         let currentTime = null
-        var pattern1 = new RegExp("[0-9]+");  // 判断是否为数字
+        let pattern1 = new RegExp("[0-9]+");  // 判断是否为数字
         let pattern2 = new RegExp("[A-Za-z]+");  // 判断是否为英文
         let musicTextDom = document.getElementById('music-text')
         let finBtn = document.getElementById('fin-btn')
@@ -127,6 +129,8 @@
         $('audio').bind('ended', function(){
             console.log('ended')
             console.log(lrcArr)  // get array
+            lyrics = parseLyrics(lrcArr)
+            console.log(lyrics)
         })
 
         function insertAfter(newElement, targetElement){ // newElement是要追加的元素targetElement 是指定元素的位置
@@ -185,6 +189,8 @@
                 }
             }
             console.log(changeArr)
+            // lyrics = parseLyrics(changeArr);
+            // console.log(lyrics)
             musicTextDom.value = changeArr.join("\n")
         })
         /**
@@ -198,6 +204,41 @@
                 return false
             }
         }
+        
+        function parseLyrics(lrc) {
+            let lyrics = [];
+            for (let i = 0; i < lrc.length; i++) {
+                let line = lrc[i];
+                let time = line.substring(1,9);
+                let text = line.substring(11);
+                let minutes = parseInt(time.substring(0,2));
+                let seconds = parseInt(time.substring(3,5));
+                let milliseconds = parseInt(time.substring(6,9));
+                let timestamp = minutes * 60 * 1000 + seconds * 1000 + milliseconds;
+                lyrics.push({time: timestamp, text: text});
+            }
+            return lyrics;
+        }
+        // 0  1  2  3  4
+        // a  b  c  d  e
+        // 1  3  6  8  10
+        let index0 = 0
+        function writing() {
+            audio.play()
+            if (!index0) {
+                interval = lyrics[index0].time
+            } else {
+                console.log(lyrics[index0 - 1].text)
+                if (index0 < lyrics.length) {
+                    interval = lyrics[index0].time - lyrics[index0 - 1].time
+                } else {
+                    console.log('结束')
+                    return 0
+                }
+            }
+            setTimeout(writing.bind(this), interval, ++index0);
+        }
+
     </script>
 </body>
 </html>
