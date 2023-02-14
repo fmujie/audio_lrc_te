@@ -6,30 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link href="./CSS/500ios.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="./CSS/audioPlay.css" rel="stylesheet" type="text/css" media="all"/>
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <style>
-        /* 滚动条样式设置 */
-        ::-webkit-scrollbar-track {
-            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            background-color: #F5F5F5;
-        }
-
-        ::-webkit-scrollbar {
-            width: 12px;
-            background-color: #F5F5F5;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            border-radius: 10px;
-            -webkit-box-shadow: inset 0 0 6px rgba(112, 200, 241, 0.3);
-            background-color: #555;
-        }
-
-        /* 滚动条样式设置 */
+        
     </style>
 </head>
 <body>
@@ -45,20 +28,24 @@
             <!-- 模态框头部 -->
             <div class="modal-header">
                 <button class="btn btn-primary mr-1" id="spile-btn">分词</button>
-                <button class="btn btn-success mr-1" id="fin-btn">保存</button>
+                <!-- <button class="btn btn-success mr-1" id="fin-btn">保存</button> -->
                 <button type="button" id="reload-btn" class="btn btn-primary mr-1">Reload</button>
                 <button type="button" id="tag-btn" class="btn btn-primary mr-1">Tag</button>
-                <button onclick="writing()" type="button" id="tag-btn" class="btn btn-primary mr-1">writing</button>
-                <audio id="audio-element" style="opacity: 0.5;" controls>
+                <button onclick="writing()" type="button" id="tag-btn" class="btn btn-primary mr-1">Preview</button>
+                
+                <canvas id="canvas" style="height: 37px; width: 150px;"></canvas>
+                <audio id="audio-element" style="opacity: 0.5;">
                     <source src="audio/newboy.mp3" type="audio/mpeg">
                 </audio>
+                  
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
     
             <!-- 模态框主体 -->
             <div class="modal-body d-flex justify-content-around bg-secondary">
                 <div class="text-container row">
-                    <textarea class="form-control" id="music-text" rows="5" style="width: 200px;" id="comment">穿新衣吧 
+                    <div style="text-align: center;">
+<pre class="form-control" id="music-text" style="width: 300px; height: 360px;" id="comment" readonly="readonly">穿新衣吧 
 剪新发型呀 
 轻松一下 Wds98 
 打扮漂亮 
@@ -69,9 +56,10 @@
 剪新发型呀 
 轻松一下 Wds98 
 以后的路不再会有痛苦 
-我们的未来该有多酷</textarea>
+我们的未来该有多酷</pre>
+                    </div>
                 </div>
-                <div class="terminal-window">
+                <div class="terminal-window" style="width: 350px;">
                     <header>
                         <div class="button green"  id="button"></div>
                         <div class="button yellow"></div>
@@ -87,26 +75,29 @@
             </div>
     
             <!-- 模态框底部 -->
-            <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            <div class="modal-footer d-flex justify-content-between">
+                <div>
+                    <span class="badge badge-light">Coded by <a href="https://github.com/fmujie" target="_blank" class="alert-link">fmujie</a> && <a href="https://github.com/github-power" target="_blank" class="alert-link">github-power</a></span>
+                </div>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
             </div>
     
         </div>
         </div>
     </div>
-    <script src="./JS/500ios.js"></script>
     <script>
         let index = 0
         let textArr = null
         let textArrIndex = 0;  
-        let musicArr = null
+        let musicArr = []
         let lrcArr = []
         let lyrics = []
         let currentTime = null
         let pattern1 = new RegExp("[0-9]+");  // 判断是否为数字
         let pattern2 = new RegExp("[A-Za-z]+");  // 判断是否为英文
         let musicTextDom = document.getElementById('music-text')
-        let finBtn = document.getElementById('fin-btn')
+        let terminalDom = document.getElementsByClassName('terminal-window')
+        // let finBtn = document.getElementById('fin-btn')
         let spileBtn = document.getElementById('spile-btn')
         let tagBtn = document.getElementById('tag-btn')
         let reloadBtn = document.getElementById('reload-btn')
@@ -145,11 +136,12 @@
             let ms = (currentTime % 60).toFixed(2).toString().slice(-2)
             m.length != 2 ? m = '0' + m : m
             s.length != 2 ? s = '0' + s : s
-            // console.log('[' + m + ':' + s + '.' + ms + '] ' + musicArr[index]);
+            // console.log('[' + m + ':' + s + '.' + ms + '] ' + musicArr[index]);  // 调试用
             typeof(musicArr[index]) == 'string' ? lrcArr.push('[' + m + ':' + s + '.' + ms + '] ' + musicArr[index++]) : null
             var p = document.createElement("p") // create pelement
             p.classList.add("text-white")
             p.classList.add("mb-1")
+            p.setAttribute('disabled', true)
             p.innerHTML = '$ ' + lrcArr[index - 1]  // lrcArr中值存放到P标签内
             console.log(lrcArr[index - 1])
             var header = document.getElementById('lrc_text')
@@ -157,23 +149,17 @@
             $('#lrc_list').scrollTop( $('#lrc_list')[0].scrollHeight);
         }
 
-        finBtn.addEventListener("click",()=>{
-                musicArr = musicTextDom.value.split("\n")
-                console.log(musicArr);
-            })
-
         spileBtn.addEventListener("click",()=>{
-            console.log(musicTextDom.value)
-            textarr = musicTextDom.value.replace(/\n/g,"<br>").replace(/\s*/g,"").split('')
-            console.log(textarr)
-            let changeArr = []
+            console.log(musicTextDom.innerHTML)
+            textarr = musicTextDom.innerHTML.replace(/\n/g,"<br>").replace(/\s*/g,"").split('')
+            // console.log(textarr)  // 调试用
             let i = 0
             let j = 0
             let k = 0
             let m = null
             while(i < textarr.length){
                 if (textarr[i] == '<'){
-                    changeArr[k - 1] = changeArr[k-1] + '<br>'
+                    musicArr[k - 1] = musicArr[k-1] + '<br>'
                     i += 4
                 } else {
                     if (isEnOrNum(textarr[i])) {
@@ -181,17 +167,18 @@
                         while (isEnOrNum(textarr[++i])) {
                             textarr[m] += textarr[i]
                         }
-                        console.log(i, m, k, textarr[m])
-                        changeArr[k++] = textarr[m]
+                        // console.log(i, m, k, textarr[m])  // 调试用
+                        musicArr[k++] = textarr[m]
                     } else {
-                        changeArr[k++] = textarr[i++]
+                        musicArr[k++] = textarr[i++]
                     }
                 }
             }
-            console.log(changeArr)
-            // lyrics = parseLyrics(changeArr);
-            // console.log(lyrics)
-            musicTextDom.value = changeArr.join("\n")
+
+            musicTextDom.innerHTML = musicArr.join("\n")
+            musicArr = musicTextDom.innerHTML.split("\n")
+            console.log(musicArr);  // 调试用以查看打点后的lrc格式的music歌词数组
+            disbtn(spileBtn)
         })
         /**
          *  判读字符时候为英文或 数字
@@ -205,6 +192,10 @@
             }
         }
         
+        /**
+         *  @param {Array}
+         * return {Array} lrc解析后的应用数组
+         */
         function parseLyrics(lrc) {
             let lyrics = [];
             for (let i = 0; i < lrc.length; i++) {
@@ -227,18 +218,80 @@
             audio.play()
             if (!index0) {
                 interval = lyrics[index0].time
+                musicTextDom.innerHTML = ''
             } else {
+                musicTextDom.innerHTML += lyrics[index0 - 1].text
                 console.log(lyrics[index0 - 1].text)
                 if (index0 < lyrics.length) {
                     interval = lyrics[index0].time - lyrics[index0 - 1].time
                 } else {
                     console.log('结束')
+                    index0 = 0
                     return 0
                 }
             }
             setTimeout(writing.bind(this), interval, ++index0);
         }
 
+        function disbtn(element)
+        {
+            console.log(element)
+            element.setAttribute('disabled', true)
+            element.classList.remove('btn-primary')
+            element.classList.add('btn-secondary')
+        }
+    </script>
+    <script>
+        // 获取音频上下文和音频元素
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const audioElement = document.getElementById('audio-element');
+
+        // 创建音频源和分析器节点
+        const audioSource = audioCtx.createMediaElementSource(audioElement);
+        const analyser = audioCtx.createAnalyser();
+
+        // 将分析器连接到音频源和输出节点
+        audioSource.connect(analyser);
+        analyser.connect(audioCtx.destination);
+
+        // 设置分析器参数
+        analyser.fftSize = 2048;
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        // 获取画布和上下文
+        const canvas = document.getElementById('canvas');
+        const canvasCtx = canvas.getContext('2d');
+
+        // 绘制函数
+        function draw() {
+            requestAnimationFrame(draw);
+
+            // 将音频数据复制到dataArray中
+            analyser.getByteFrequencyData(dataArray);
+
+            // 清空画布并设置颜色
+            canvasCtx.fillStyle = 'rgb(255, 255, 255)';
+            canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 设置柱状图的参数
+            const barWidth = (canvas.width / bufferLength) * 2.5;
+            let barHeight;
+            let x = 0;
+
+            // 循环遍历dataArray并绘制柱状图
+            for (let i = 0; i < bufferLength; i++) {
+                barHeight = dataArray[i];
+
+                canvasCtx.fillStyle = `rgb(${barHeight},50,50)`;
+                canvasCtx.fillRect(x, canvas.height - barHeight / 2, barWidth, barHeight / 2);
+
+                x += barWidth + 1;
+            }
+        }
+        // 开始绘制
+        draw();
+    </script>
     </script>
 </body>
 </html>

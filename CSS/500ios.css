@@ -19,7 +19,6 @@
     width: 37.5rem;
     height: 22.5rem;
     border-radius: .625rem;
-    margin-left: 25px;
     position: relative;
     /* top: 1.5rem; */
   }
@@ -195,3 +194,7 @@
   }
 
 /* 滚动条样式设置 */
+#music-text::after{
+  content: '|';
+  animation: blink 1s infinite
+}
